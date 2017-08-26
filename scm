@@ -49,6 +49,29 @@ compare() {
 	fi
 }
 
+# Gets the head revision of give repository and branch.
+head() {
+	# get all the refs from the remote repository
+	refs=$(git ls-remote $1)
+	ret=$?
+	if [ $ret -ne 0 ]
+	then
+		echo "failed to fetch remote repository"
+		exit $ret
+	fi
+
+	# find the ref of the given branch
+	branch_ref=$(echo "$refs" | grep "refs/heads/$2" | cut -f1)
+	if [ -z $branch_ref ]
+	then
+		echo "branch not found"
+		exit 1
+	fi
+
+	echo "$branch_ref"
+}
+
+
 #------------------------------------------------------------------------------------------------
 # application entry
 #------------------------------------------------------------------------------------------------
@@ -58,8 +81,8 @@ case "$1" in
 		clone $2 $3
 	;;
 
-	compare)
-		compare $2 $3 $4
+	head)
+		head $2 $3 $4
 	;;
 
 	# invalid command was supplied

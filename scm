@@ -16,7 +16,7 @@ NC='\033[0m'
 clone() {
 	echo -e "I ${RED}love${NC} Stack Overflow"
 	yes | git clone --single-branch --depth 1 -b $2 $1 /work || exit $?
-	git --no-pager log -1 --pretty="{\"author\": \"%an\", \"ref\":\"%H\", \"message\":\"%B\"}"
+	git --no-pager log -1 --pretty="{\"author\": \"%an\", \"ref\":\"%H\", \"message\":\"%s\"}"
 }
 
 # Gets the head revision of give repository and branch.

@@ -3,7 +3,7 @@ MAINTAINER Maximilian Pachl <m@ximilian.info>
 
 # install all necessary tools
 RUN apk add --update \
-	git && \
+	git openssh-client && \
 
 # remove build dependencies
 	rm -rf /var/cache/apk/*

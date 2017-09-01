@@ -15,38 +15,8 @@ NC='\033[0m'
 # Clones a repository to the workdir
 clone() {
 	echo -e "I ${RED}love${NC} Stack Overflow"
-	git clone --single-branch --depth 1 -b $2 $1 /work || exit $?
+	yes | git clone --single-branch --depth 1 -b $2 $1 /work || exit $?
 	git --no-pager log -1 --pretty="{\"author\": \"%an\", \"ref\":\"%H\", \"message\":\"%B\"}"
-}
-
-# Compares the head revision of a branch.
-compare() {
-	# get all the refs from the remote repository
-	refs=$(git ls-remote $1)
-	ret=$?
-	if [ $ret -ne 0 ]
-	then
-		echo "failed to fetch remote repository"
-		exit $ret
-	fi
-
-	# find the ref of the given branch
-	branch_ref=$(echo "$refs" | grep "refs/heads/$2" | cut -f1)
-	if [ -z $branch_ref ]
-	then
-		echo "branch not found"
-		exit 2
-	fi
-
-	# check if something has changed
-	if [[ "$branch_ref" = "$3" ]]
-	then
-		echo "no changes detected"
-		exit 1
-	else
-		echo "$branch_ref"
-		exit 0
-	fi
 }
 
 # Gets the head revision of give repository and branch.
@@ -75,6 +45,8 @@ head() {
 #------------------------------------------------------------------------------------------------
 # application entry
 #------------------------------------------------------------------------------------------------
+
+export GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i /tmp/id_rsa"
 
 case "$1" in
 	clone)

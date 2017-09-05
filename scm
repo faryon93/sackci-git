@@ -6,7 +6,7 @@
 
 RED='\033[0;31m'
 NC='\033[0m'
-
+WORKDIR='work'
 
 #------------------------------------------------------------------------------------------------
 # working modes
@@ -15,7 +15,9 @@ NC='\033[0m'
 # Clones a repository to the workdir
 clone() {
 	echo -e "I ${RED}love${NC} Stack Overflow"
-	yes | git clone --single-branch --depth 1 -b $2 $1 /work || exit $?
+	mkdir $WORKDIR
+	yes | git clone --single-branch --depth 1 -b $2 $1 $WORKDIR || exit $?
+	cd $WORKDIR
 	git --no-pager log -1 --pretty="{\"author\": \"%an\", \"ref\":\"%H\", \"message\":\"%s\"}"
 }
 
@@ -46,6 +48,7 @@ head() {
 # application entry
 #------------------------------------------------------------------------------------------------
 
+# ssh configuration for git
 export GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i /tmp/id_rsa"
 
 case "$1" in

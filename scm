@@ -9,6 +9,18 @@ NC='\033[0m'
 WORKDIR='work'
 
 #------------------------------------------------------------------------------------------------
+# helper functions
+#------------------------------------------------------------------------------------------------
+
+# Escapes all relevant chars.
+function escape_chars {
+    sed -r 's/\\/'\\\\\\\\'/g' | \
+    sed -r 's/"/'\\\\\"'/g' | \
+    awk -vRS="\n" -vORS="\\\\n" '1'
+}
+
+
+#------------------------------------------------------------------------------------------------
 # working modes
 #------------------------------------------------------------------------------------------------
 
@@ -18,7 +30,11 @@ clone() {
 	mkdir $WORKDIR
 	yes | git clone --single-branch --depth 1 -b $2 $1 $WORKDIR || exit $?
 	cd $WORKDIR
-	git --no-pager log -1 --pretty="{\"author\": \"%an\", \"ref\":\"%H\", \"message\":\"%s\"}"
+
+	author=$(git log -n1 --pretty=format:'%aN' | escape_chars)
+	ref=$(git log -n1 --pretty=format:%H | escape_chars)
+	message=$(git log -n1 --pretty=format:%B | escape_chars)
+	echo "{\"author\":\"$author\",\"ref\":\"$ref\",\"message\":\"$message\"}"
 }
 
 # Gets the head revision of give repository and branch.

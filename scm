@@ -16,9 +16,9 @@ WORKDIR='work'
 function escape_chars {
     sed -r 's/\\/'\\\\\\\\'/g' | \
     sed -r 's/"/'\\\\\"'/g' | \
-    awk -vRS="\n" -vORS="\\\\n" '1' | \
-    awk -vRS="\r" -vORS="\\\\r" '1' | \
-    awk -vRS="\t" -vORS="\\\\t" '1'
+    sed -r 's/\t/'\\\\t'/g' | \
+    sed -r 's/\r/'\\\\r'/g' | \
+    sed -r ':a;N;$!ba;s/\n/\\n/g'
 }
 
 
